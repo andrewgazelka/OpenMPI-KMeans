@@ -1,14 +1,26 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
-#include <memory>
-#include "utils.h"
-#include <limits>
-#include "auxil1.h"
-
+#include "float.h"
 
 #define MAX_LINE 210
+#define bool char
+#define true 1
+#define false 0
+
+
+int MyKmeans_p(float *fdata, int *map2clust, int *counter, const int *params,
+               float tolerance, MPI_Comm comm);
+
+
+int saxpy_(int *n, float *a, float *x, int *incx, float *y, int *incy);
+
+int sscal_(int *n, float *alpha, float *x, int *inc);
+
+void scopy_(int *nfeat, float *x, int *incx, float *y, int *incy);
+
+void get_rand_ftr(float *ctr, float *fdata, int sampleCount, int featureCount);
 
 void get_rand_ftr(float *ctr, float *fdata, int sampleCount, int featureCount) {
 // gets a random convex  combination of all samples
@@ -132,28 +144,28 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     MPI_Comm_rank(comm, &processId);
 
     //-------------------- unpack params.
-    let clusterNum = params[0];
-    let sampleNum = params[1];
-    let featureNum = params[2];
-    let maxIterations = params[3];
+    int clusterNum = params[0];
+    int sampleNum = params[1];
+    int featureNum = params[2];
+    int maxIterations = params[3];
 
-    let tolerance2 = tolerance * tolerance;
+    float tolerance2 = tolerance * tolerance;
     //int NcNf =clusterNum*featureNum;
     /*-------------------- replace these by your function*/
 
     // how much data each processor should process
-    let chunkSize = (sampleNum / processCount);
-    let fromIdx = chunkSize * processId;
+    int chunkSize = (sampleNum / processCount);
+    int fromIdx = chunkSize * processId;
 
-    auto sampleTo = fromIdx + chunkSize;
-    let samplesLeftOver = sampleNum - sampleTo;
+    int sampleTo = fromIdx + chunkSize;
+    int samplesLeftOver = sampleNum - sampleTo;
 
     if (samplesLeftOver < chunkSize) { // the last chunk is not large enough
         sampleTo = sampleNum;
     }
 
-    std::unique_ptr<float[]> old_centers(new float[featureNum * sampleNum]{std::numeric_limits<float>::max()});
-    std::unique_ptr<float[]> centers(new float[featureNum * sampleNum]{0});
+    float old_centers[featureNum * sampleNum];
+    float centers[featureNum * sampleNum];
 
     for (int clusterOn = 0; clusterOn < clusterNum; clusterOn++) {
         float *center = &centers[clusterOn * featureNum];
@@ -165,11 +177,11 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
     // average
     for (int i = 0; i < clusterNum * featureNum; i++) {
-        centers[i] /= static_cast<float>(processCount);
+        centers[i] /= (float) processCount;
     }
 
 
-    std::unique_ptr<float[]> sum(new float[featureNum * clusterNum]);
+    float sum[featureNum * clusterNum];
 
     int iterOn = 0;
 
@@ -183,25 +195,25 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
 
         for (int sampleIdx = fromIdx; sampleIdx < sampleTo; sampleIdx++) {
-            let dataStartIdx = sampleIdx * sampleNum;
+            int dataStartIdx = sampleIdx * sampleNum;
 
             int clusterMinIdx = -1;
-            float dist2Min = std::numeric_limits<float>::max();
+            float dist2Min = FLT_MAX;
 
             // compute the closest cluster to the data point
             for (int clusterOn = 0; clusterOn < clusterNum; ++clusterOn) {
 
-                let clusterStartIdx = sampleNum * clusterOn;
+                int clusterStartIdx = sampleNum * clusterOn;
                 float dist2 = 0;
 
                 // go over data from one sample
                 for (int i = 0; i < featureNum; i++) {
-                    let dataIdx = dataStartIdx + i;
-                    let clusterIdx = clusterStartIdx + i;
-                    let on = inputData[dataIdx];
-                    let expect = centers[clusterIdx];
-                    let difference = on - expect;
-                    let d2 = difference * difference;
+                    int dataIdx = dataStartIdx + i;
+                    int clusterIdx = clusterStartIdx + i;
+                    float on = inputData[dataIdx];
+                    float expect = centers[clusterIdx];
+                    float difference = on - expect;
+                    float d2 = difference * difference;
                     dist2 += d2;
                 }
                 if (dist2 < dist2Min) {
@@ -212,7 +224,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
             // add the sample to the sum for the cluster
             for (int i = 0; i < sampleNum; i++) {
-                let dataIdx = dataStartIdx + i;
+                int dataIdx = dataStartIdx + i;
                 sum[clusterMinIdx * featureNum + i] += inputData[dataIdx];
             }
 
@@ -234,7 +246,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
             // difference between old center and new center
             float difference2 = 0;
 
-            let count = counter[clusterOn];
+            int count = counter[clusterOn];
             float *sumStart = &sum[clusterOn * featureNum];
             float *centerStart = &centers[clusterOn * featureNum];
 
@@ -249,10 +261,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
             // average
             for (int i = 0; i < clusterNum * featureNum; i++) {
-                let from = old_centers[i];
-                let to = sumStart[i] / static_cast<float>(processCount);;
-                let diff = from - to;
-                let diff2 = diff * diff;
+                float from = old_centers[i];
+                float to = sumStart[i] / (float) processCount;
+                float diff = from - to;
+                float diff2 = diff * diff;
 
                 centerStart[i] = to;
                 difference2 += diff2;
@@ -269,7 +281,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
         }
 
         // set old centers to current centers
-        for (int i = 0; i < featureNum * sampleNum; i++){
+        for (int i = 0; i < featureNum * sampleNum; i++) {
             old_centers[i] = centers[i];
         }
 
