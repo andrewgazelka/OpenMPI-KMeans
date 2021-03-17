@@ -1,15 +1,13 @@
 #include <mpi.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+#include <cmath>
+#include "auxil1.h"
 
 int read_csv_matrix(float *mtrx, char file_name[], int *nrow, int *nfeat);
 
 void results_to_file(int *map2clust, int nsamples, int nfeat);
-
-int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
-               float tol, MPI_Comm comm);
 
 #define NSAMPLES 10000
 #define NFEAT 17
