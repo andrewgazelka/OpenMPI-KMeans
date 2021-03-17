@@ -3,23 +3,12 @@
 #include <cstring>
 #include <mpi.h>
 #include <memory>
-#include "auxil1.h"
 #include "utils.h"
 #include <limits>
+#include "auxil1.h"
 
 
 #define MAX_LINE 210
-
-/*-------------------- begin prototyping */
-int saxpy_(int *n, float *a, float *x, int *incx, float *y, int *incy);
-
-int sscal_(int *n, float *alpha, float *x, int *inc);
-
-void scopy_(int *nfeat, float *x, int *incx, float *y, int *incy);
-
-void get_rand_ftr(float *ctr, float *fdata, int sampleCount, int featureCount);
-
-/*-------------------- end prototyping */
 
 void get_rand_ftr(float *ctr, float *fdata, int sampleCount, int featureCount) {
 // gets a random convex  combination of all samples
@@ -67,7 +56,7 @@ int read_csv_matrix(float *mtrx, char file_name[], int *nrow, int *nfeat) {
     memset(line, 0, MAX_LINE);
     //
     int k, j, start, rlen, lrow = 0, lfeat = 0, jcol = 0, jcol0 = 0, len, first = 1;
-    char *delim;
+    const char *delim;
     delim = ",";
     /*-------------------- big while loop */
     while (fgets(line, MAX_LINE, finputs)) {
@@ -224,7 +213,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
             // add the sample to the sum for the cluster
             for (int i = 0; i < sampleNum; i++) {
                 let dataIdx = dataStartIdx + i;
-                sum[clusterMinIdx * featureNum + i] += inputData[dataStartIdx];
+                sum[clusterMinIdx * featureNum + i] += inputData[dataIdx];
             }
 
             // change counters/clustIds accordingly
