@@ -164,8 +164,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
         sampleTo = sampleNum;
     }
 
-    float old_centers[featureNum * sampleNum];
-    float centers[featureNum * sampleNum];
+    int center_size = featureNum * clusterNum;
+
+    float old_centers[center_size];
+    float centers[center_size];
 
     for (int clusterOn = 0; clusterOn < clusterNum; clusterOn++) {
         float *center = &centers[clusterOn * featureNum];
