@@ -177,7 +177,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     // sum all of the centers cross-process
 
     printf("center start\n");
-    MPI_Allreduce(&centers, &centers, featureNum * clusterNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+    float newCenters[center_size];
+    MPI_Allreduce(&centers, &newCenters, featureNum * clusterNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
     printf("center finish\n");
 
     // average
