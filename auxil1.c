@@ -308,6 +308,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
         iterOn++;
     }
 
+    printf("done!\n");
+
 
     return 0;
 }
