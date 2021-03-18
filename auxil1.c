@@ -126,17 +126,17 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
-    inputData     = float* (featureNum*sampleNum)   = input data (local to this process).
+    inputData     = float* (featureCount*sampleCount)   = input data (local to this process).
     params[ ]  = int* contains 
-    params[0] = clusterNum     = number of clusters
-    params[1] = sampleNum      =  number of sampleNum
-    params[2] = featureNum  = number of featureNum
+    params[0] = clusterCount     = number of clusters
+    params[1] = sampleCount      =  number of sampleCount
+    params[2] = featureCount  = number of featureCount
     params[3] = maxIterations = max number of Kmeans iterations
     tolerance       = tolerance for determining if centers have converged.
     comm      = communicator
   OUT:
-   clustId[i] = cluster of sample i for i=1...sampleNum
-   counter[j] = size of cluster j for j=1:clusterNum
+   clustId[i] = cluster of sample i for i=1...sampleCount
+   counter[j] = size of cluster j for j=1:clusterCount
    ===================================================*/
     // some declarations
     int processCount, processId;
@@ -145,31 +145,31 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
     MPI_Comm_rank(comm, &processId);
 
     //-------------------- unpack params.
-    int clusterNum = params[0];
-    int sampleNum = params[1];
-    printf("sampleNum %d\n", sampleNum);
-    int featureNum = params[2];
+    int clusterCount = params[0];
+    int sampleCount = params[1];
+    printf("sampleCount %d\n", sampleCount);
+    int featureCount = params[2];
     int maxIterations = params[3];
 
     float tolerance2 = tolerance * tolerance;
-    //int NcNf =clusterNum*featureNum;
+    //int NcNf =clusterCount*featureCount;
     /*-------------------- replace these by your function*/
 
     // how much data each processor should process
-    int chunkSize = (sampleNum / processCount);
+    int chunkSize = (sampleCount / processCount);
     int sampleStart = chunkSize * processId;
 
     int sampleTo = sampleStart + chunkSize;
-    int samplesLeftOver = sampleNum - sampleTo;
+    int samplesLeftOver = sampleCount - sampleTo;
 
     if (samplesLeftOver < chunkSize) { // the last chunk is not large enough
-        sampleTo = sampleNum;
+        sampleTo = sampleCount;
     }
 
     assert(sampleStart >= 0);
-    assert(sampleTo <= sampleNum);
+    assert(sampleTo <= sampleCount);
 
-    int center_size = featureNum * clusterNum;
+    int center_size = featureCount * clusterCount;
 
 
     float old_centers[center_size];
@@ -180,19 +180,19 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
 
     float centers[center_size];
 
-    for (int clusterOn = 0; clusterOn < clusterNum; clusterOn++) {
-        float *center = &centers[clusterOn * featureNum];
-        get_rand_ftr(center, inputData, sampleNum, featureNum);
+    for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
+        float *center = &centers[clusterOn * featureCount];
+        get_rand_ftr(center, inputData, sampleCount, featureCount);
     }
 
     // sum all of the centers cross-process
 
     float updatedCenters[center_size];
-    MPI_Allreduce(&centers, &updatedCenters, featureNum * clusterNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&centers, &updatedCenters, featureCount * clusterCount, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
     memcpy(&centers, &updatedCenters, sizeof(centers));
 
     // average
-    for (int i = 0; i < clusterNum * featureNum; i++) {
+    for (int i = 0; i < clusterCount * featureCount; i++) {
         centers[i] /= (float) processCount;
     }
 
@@ -201,35 +201,35 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
 
     int iterOn = 0;
 
-    int clustId[sampleNum];
-    int counter[clusterNum];
+    int clustId[sampleCount];
+    int counter[clusterCount];
 
     while (iterOn < maxIterations) {
 
-        printf("sampleNum %d\n", sampleNum);
+        printf("sampleCount %d\n", sampleCount);
 
-        for (int j = 0; j < sampleNum; j++) clustId[j] = 0;
-        for (int j = 0; j < clusterNum; j++) counter[j] = 0;
+        for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
+        for (int j = 0; j < clusterCount; j++) counter[j] = 0;
 
         // reset sum
-        for (int i = 0; i < featureNum * clusterNum; i++) sum[i] = 0;
+        for (int i = 0; i < featureCount * clusterCount; i++) sum[i] = 0;
 
 
         for (int sampleIdx = sampleStart; sampleIdx < sampleTo; sampleIdx++) {
 
-            int dataStartIdx = sampleIdx * featureNum;
+            int dataStartIdx = sampleIdx * featureCount;
 
             int clusterMinIdx = -1;
             float dist2Min = FLT_MAX;
 
             // compute the closest cluster to the data point
-            for (int clusterOn = 0; clusterOn < clusterNum; ++clusterOn) {
+            for (int clusterOn = 0; clusterOn < clusterCount; ++clusterOn) {
 
-                int clusterStartIdx = featureNum * clusterOn;
+                int clusterStartIdx = featureCount * clusterOn;
                 float dist2 = 0;
 
                 // go over data from one sample
-                for (int i = 0; i < featureNum; i++) {
+                for (int i = 0; i < featureCount; i++) {
                     int dataIdx = dataStartIdx + i;
                     int clusterIdx = clusterStartIdx + i;
                     float on = inputData[dataIdx];
@@ -245,19 +245,19 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
             }
 
             // add the sample to the sum for the cluster
-            for (int i = 0; i < featureNum; i++) {
+            for (int i = 0; i < featureCount; i++) {
                 int dataIdx = dataStartIdx + i;
 
                 assert(dataIdx > 0);
-                assert(dataIdx < featureNum * sampleNum);
+                assert(dataIdx < featureCount * sampleCount);
 
                 float datum = inputData[dataIdx];
-                sum[clusterMinIdx * featureNum + i] += datum;
+                sum[clusterMinIdx * featureCount + i] += datum;
             }
 
             // change counters/clustIds accordingly
             counter[clusterMinIdx]++;
-            clustId[sampleNum] = clusterMinIdx;
+            clustId[sampleIdx] = clusterMinIdx;
         }
 
         // add sums and counters globally
@@ -266,37 +266,37 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
         MPI_Allreduce(&sum, &updatedSum, center_size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
         memcpy(&sum, &updatedSum, sizeof(sum));
 
-        float updatedCounter[sampleNum];
-        MPI_Allreduce(&counter, &updatedCounter, sampleNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+        float updatedCounter[sampleCount];
+        MPI_Allreduce(&counter, &updatedCounter, sampleCount, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
         memcpy(&counter, &updatedCounter, sizeof(counter));
 
         // if the new data is within the threshold
         bool withinThreshold = true;
 
         // see if the data is within threshold and compute new centers
-        for (int clusterOn = 0; clusterOn < clusterNum; clusterOn++) {
+        for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
 
             // difference between old center and new center
             float difference2 = 0;
 
             int count = counter[clusterOn];
-            float *sumStart = &sum[clusterOn * featureNum];
-            float *centerStart = &centers[clusterOn * featureNum];
+            float *sumStart = &sum[clusterOn * featureCount];
+            float *centerStart = &centers[clusterOn * featureCount];
 
 
             // we need to sample
             if (count == 0) {
                 printf("sum start\n");
-                get_rand_ftr(sumStart, inputData, sampleNum, featureNum);
+                get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
 
                 // sum
-                float sumStartUpdated[featureNum];
-                MPI_Allreduce(&sumStart, &sumStartUpdated, featureNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+                float sumStartUpdated[featureCount];
+                MPI_Allreduce(&sumStart, &sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
                 memcpy(&sumStart, &sumStartUpdated, sizeof(sumStart));
             }
 
             // average
-            for (int i = 0; i < clusterNum * featureNum; i++) {
+            for (int i = 0; i < clusterCount * featureCount; i++) {
                 float to = sumStart[i] / (float) processCount;
 
                 centerStart[i] = to;
@@ -318,7 +318,7 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
         }
 
         // set old centers to current centers
-        for (int i = 0; i < featureNum * sampleNum; i++) {
+        for (int i = 0; i < featureCount * sampleCount; i++) {
             old_centers[i] = centers[i];
         }
 
