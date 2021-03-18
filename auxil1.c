@@ -337,6 +337,9 @@ int MyKmeans_p(float *inputDataIn, int *clustIdRet, int *counterRet, const int *
         iterOn++;
     }
 
+    for (int j = 0; j < sampleCount; j++) clustIdRet[j] = clustId[j];
+    for (int j = 0; j < clusterCount; j++) counterRet[j] = counter[j];
+
     printf("done!\n");
 
 
