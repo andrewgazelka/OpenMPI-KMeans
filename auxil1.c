@@ -191,6 +191,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
         float *center = &centers[clusterOn * featureCount];
         get_rand_ftr(center, inputData, sampleCount, featureCount);
+        printf("center  %f\n", *center);
     }
 
     // sum all of the centers cross-process
