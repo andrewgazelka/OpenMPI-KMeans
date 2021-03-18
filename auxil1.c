@@ -14,6 +14,18 @@ int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
                float tolerance, MPI_Comm comm);
 
 
+void sumGlobalFloat(float *array, int size, MPI_Comm comm) {
+    float temp[size];
+    MPI_Allreduce(array, temp, size, MPI_FLOAT, MPI_SUM, comm);
+    memcpy(array, temp, sizeof(float) * size);
+}
+
+void sumGlobalInt(int *array, int size, MPI_Comm comm) {
+    int temp[size];
+    MPI_Allreduce(array, temp, size, MPI_INT, MPI_SUM, comm);
+    memcpy(array, temp, sizeof(int) * size);
+}
+
 int saxpy_(int *n, float *a, float *x, int *incx, float *y, int *incy);
 
 int sscal_(int *n, float *alpha, float *x, int *inc);
@@ -180,15 +192,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
         float *center = &centers[clusterOn * featureCount];
         get_rand_ftr(center, inputData, sampleCount, featureCount);
-//        printf("center  %f\n", *center);
     }
 
     // sum all of the centers cross-process
-
-    float updatedCenters[center_size];
-
-    MPI_Allreduce(centers, updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
-    memcpy(centers, updatedCenters, center_size * sizeof(float ));
+    sumGlobalFloat(centers, center_size, comm);
 
     // average
     for (int i = 0; i < clusterCount * featureCount; i++) {
@@ -216,13 +223,13 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             int dataStartIdx = sampleIdx * featureCount;
 
             int clusterMinIdx = -1;
-            double dist2Min = DBL_MAX;
+            float dist2Min = FLT_MAX;
 
             // compute the closest cluster to the data point
             for (int clusterOn = 0; clusterOn < clusterCount; ++clusterOn) {
 
                 int clusterStartIdx = featureCount * clusterOn;
-                double dist2 = 0;
+                float dist2 = 0;
 
                 // go over data from one sample
                 for (int i = 0; i < featureCount; i++) {
@@ -232,9 +239,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
-                    double difference = on - expect;
+                    float difference = on - expect;
 
-                    double d2 = difference * difference;
+                    float d2 = difference * difference;
                     dist2 += d2;
                 }
 
@@ -261,13 +268,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
         // add sums and counters globally
 
-        float updatedSum[center_size];
-        MPI_Allreduce(sum, updatedSum, center_size, MPI_FLOAT, MPI_SUM, comm);
-        memcpy(sum, updatedSum, sizeof(float) * center_size) ;
-
-        int updatedCounter[clusterCount];
-        MPI_Allreduce(counter, updatedCounter, clusterCount, MPI_INT, MPI_SUM, comm);
-        memcpy(counter, updatedCounter, sizeof(int) * (unsigned long) clusterCount); // TODO: why sizeof not work
+        sumGlobalFloat(sum, center_size, comm);
+        sumGlobalInt(counter, clusterCount, comm);
 
         // if the new data is within the threshold
         bool withinThreshold = true;
@@ -289,11 +291,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
 
                 // sum
-                float sumStartUpdated[center_size];
-
-                MPI_Barrier(comm);
-                MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
-                memcpy(sumStart, sumStartUpdated, featureCount * sizeof(float ));
+                sumGlobalFloat(sumStart, featureCount, comm);
             }
 
             // average
