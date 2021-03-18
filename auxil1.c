@@ -165,7 +165,6 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         sampleTo = sampleCount;
     }
 
-    printf("start\n");
 
     int center_size = featureCount * clusterCount;
 
@@ -188,9 +187,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
     float updatedCenters[center_size];
 
-    printf("[%d] ar 1 start \n", processId);
     MPI_Allreduce(centers, updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
-    printf("[%d] ar 1 end \n", processId);
     memcpy(centers, updatedCenters, center_size * sizeof(float ));
 
     // average
@@ -265,15 +262,11 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         // add sums and counters globally
 
         float updatedSum[center_size];
-        printf("[%d] ar 2 start \n", processId);
         MPI_Allreduce(sum, updatedSum, center_size, MPI_FLOAT, MPI_SUM, comm);
-        printf("[%d] ar 2 end \n", processId);
         memcpy(sum, updatedSum, sizeof(float) * center_size) ;
 
         int updatedCounter[clusterCount];
-        printf("[%d] ar 3 start \n", processId);
         MPI_Allreduce(counter, updatedCounter, clusterCount, MPI_INT, MPI_SUM, comm);
-        printf("[%d] ar 3 end \n", processId);
         memcpy(counter, updatedCounter, sizeof(int) * (unsigned long) clusterCount); // TODO: why sizeof not work
 
         // if the new data is within the threshold
@@ -293,19 +286,13 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
             // we need to sample
             if (count == 0) {
-                printf("[%d] count is 0\n", processId);
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
-                printf("finished rand\n");
 
                 // sum
                 float sumStartUpdated[center_size];
 
-                printf("barrier s\n");
                 MPI_Barrier(comm);
-                printf("barrier e\n");
-                printf("[%d] ar 4 start \n", processId);
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
-                printf("[%d] ar 4 end \n", processId);
                 memcpy(sumStart, sumStartUpdated, featureCount * sizeof(float ));
             }
 
