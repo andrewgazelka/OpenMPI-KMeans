@@ -231,6 +231,10 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
                 // go over data from one sample
                 for (int i = 0; i < featureCount; i++) {
                     int dataIdx = dataStartIdx + i;
+
+                    assert(dataIdx >= 0);
+                    assert(dataIdx < featureCount * sampleCount);
+
                     int clusterIdx = clusterStartIdx + i;
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
