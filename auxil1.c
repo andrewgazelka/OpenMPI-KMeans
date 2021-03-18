@@ -208,7 +208,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
             // compute the closest cluster to the data point
             for (int clusterOn = 0; clusterOn < clusterNum; ++clusterOn) {
 
-                int clusterStartIdx = sampleNum * clusterOn;
+                int clusterStartIdx = featureNum * clusterOn;
                 float dist2 = 0;
 
                 // go over data from one sample
