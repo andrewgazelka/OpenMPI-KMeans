@@ -171,6 +171,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
     int center_size = featureNum * clusterNum;
 
+
     float old_centers[center_size];
     float centers[center_size];
 
@@ -194,6 +195,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     float sum[center_size];
 
     int iterOn = 0;
+    bool looped = 0;
 
     while (iterOn < maxIterations) {
 
@@ -284,16 +286,18 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
             // average
             for (int i = 0; i < clusterNum * featureNum; i++) {
-                float from = old_centers[i];
                 float to = sumStart[i] / (float) processCount;
-                float diff = from - to;
-                float diff2 = diff * diff;
 
                 centerStart[i] = to;
-                difference2 += diff2;
+                if(looped){
+                    float from = old_centers[i];
+                    float diff = from - to;
+                    float diff2 = diff * diff;
+                    difference2 += diff2;
+                }
             }
 
-            if (difference2 > tolerance2) {
+            if (looped && difference2 > tolerance2) {
                 withinThreshold = false;
             }
         }
@@ -308,6 +312,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
             old_centers[i] = centers[i];
         }
 
+        looped = true;
         iterOn++;
     }
 
