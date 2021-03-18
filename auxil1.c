@@ -228,7 +228,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             int dataStartIdx = sampleIdx * featureCount;
 
             int clusterMinIdx = -1;
-            float dist2Min = FLT_MAX;
+            double dist2Min = DBL_MAX;
 
             // compute the closest cluster to the data point
             assert(dist2Min > 90000.0F);
@@ -236,7 +236,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             for (int clusterOn = 0; clusterOn < clusterCount; ++clusterOn) {
 
                 int clusterStartIdx = featureCount * clusterOn;
-                float dist2 = 0;
+                double dist2 = 0;
 
                 // go over data from one sample
                 for (int i = 0; i < featureCount; i++) {
@@ -249,15 +249,15 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
                     float difference = on - expect;
-                    float d2 = difference * difference;
+                    double d2 = difference * difference;
                     dist2 += d2;
                 }
+
+                assert(dist2 < DBL_MAX);
 
                 if (dist2 <= dist2Min) {
                     dist2Min = dist2;
                     clusterMinIdx = clusterOn;
-                } else if (clusterOn == 0) {
-                    printf("dist2 %f\n", dist2);
                 }
             }
 
