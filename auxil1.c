@@ -176,10 +176,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
     // sum all of the centers cross-process
 
-    printf("center start\n");
-    float newCenters[center_size];
-    MPI_Allreduce(&centers, &newCenters, featureNum * clusterNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
-    printf("center finish\n");
+    float updatedCenters[center_size];
+    MPI_Allreduce(&centers, &updatedCenters, featureNum * clusterNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+    memcpy(&centers, &updatedCenters, sizeof(centers));
 
     // average
     for (int i = 0; i < clusterNum * featureNum; i++) {
@@ -187,7 +186,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     }
 
 
-    float sum[featureNum * clusterNum];
+    float sum[center_size];
 
     int iterOn = 0;
 
@@ -240,8 +239,14 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
         }
 
         // add sums and counters globally
-        MPI_Allreduce(&sum, &sum, clusterNum * sampleNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
-        MPI_Allreduce(&counter, &counter, featureNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+
+        float updatedSum[center_size];
+        MPI_Allreduce(&sum, &updatedSum, center_size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+        memcpy(&sum, &updatedSum, sizeof(sum));
+
+        float updatedCounter[sampleNum];
+        MPI_Allreduce(&counter, &updatedCounter, sampleNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+        memcpy(&counter, &updatedCounter, sizeof(counter));
 
         // if the new data is within the threshold
         bool withinThreshold = true;
@@ -263,7 +268,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
                 get_rand_ftr(sumStart, inputData, sampleNum, featureNum);
 
                 // sum
-                MPI_Allreduce(&sumStart, &sumStart, featureNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+                float sumStartUpdated[featureNum];
+                MPI_Allreduce(&sumStart, &sumStartUpdated, featureNum, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+                memcpy(&sumStart, &sumStartUpdated, sizeof(sumStart));
             }
 
             // average
