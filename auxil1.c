@@ -300,6 +300,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 // sum
                 float sumStartUpdated[center_size];
 
+                printf("barrier s\n");
+                MPI_Barrier(comm);
+                printf("barrier e\n");
                 printf("[%d] ar 4 start \n", processId);
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
                 printf("[%d] ar 4 end \n", processId);
