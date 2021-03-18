@@ -290,7 +290,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             float *sumStart = &sum[dSum];
             float *centerStart = &centers[clusterOn * featureCount];
 
-
+            if(count == 0){
+                printf("[%d] count is 0\n", processId);
+                count = 1;
+            }
             // we need to sample
             if (count == 0) {
                 printf("[%d] count is 0\n", processId);
