@@ -147,6 +147,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     //-------------------- unpack params.
     int clusterNum = params[0];
     int sampleNum = params[1];
+    printf("sampleNum %d\n", sampleNum);
     int featureNum = params[2];
     int maxIterations = params[3];
 
@@ -195,6 +196,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     int iterOn = 0;
 
     while (iterOn < maxIterations) {
+
+        printf("sampleNum %d\n", sampleNum);
 
         for (int j = 0; j < sampleNum; j++) clustId[j] = 0;
         for (int j = 0; j < clusterNum; j++) counter[j] = 0;
