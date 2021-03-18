@@ -218,6 +218,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         for (int i = 0; i < featureCount * clusterCount; i++) sum[i] = 0;
 
 
+        printf("Sample size %d\n\n", sampleTo - sampleStart);
         for (int sampleIdx = sampleStart; sampleIdx < sampleTo; sampleIdx++) {
 
             int dataStartIdx = sampleIdx * featureCount;
