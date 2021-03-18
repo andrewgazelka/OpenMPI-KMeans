@@ -292,12 +292,14 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
             // we need to sample
             if (count == 0) {
+                printf("count is 0\n");
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
 
                 // sum
                 float sumStartUpdated[featureCount];
 
                 printf("[%d] ar 4 start \n", processId);
+                printf("barrier init\n");
                 MPI_Barrier(comm); // barrier
                 printf("barrier\n");
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
