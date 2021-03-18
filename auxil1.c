@@ -153,7 +153,6 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     //int NcNf =clusterCount*featureCount;
     /*-------------------- replace these by your function*/
 
-    int data_size = featureCount * sampleCount;
 
     // how much data each processor should process
     int chunkSize = (sampleCount / processCount);
