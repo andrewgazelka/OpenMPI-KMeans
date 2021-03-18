@@ -166,7 +166,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     }
 
     assert(sampleStart >= 0);
-    assert(sampleTo <= featureNum * sampleNum);
+    assert(sampleTo <= sampleNum);
 
     int center_size = featureNum * clusterNum;
 
@@ -204,6 +204,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
 
         for (int sampleIdx = sampleStart; sampleIdx < sampleTo; sampleIdx++) {
+
             int dataStartIdx = sampleIdx * featureNum;
 
             int clusterMinIdx = -1;
@@ -232,7 +233,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
             }
 
             // add the sample to the sum for the cluster
-            for (int i = 0; i < sampleNum; i++) {
+            for (int i = 0; i < featureNum; i++) {
                 int dataIdx = dataStartIdx + i;
                 float datum = inputData[dataIdx];
                 sum[clusterMinIdx * featureNum + i] += datum;
