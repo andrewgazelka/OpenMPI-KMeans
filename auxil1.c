@@ -269,10 +269,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         printf("[%d] ar 2 end \n", processId);
         memcpy(sum, updatedSum, sizeof(sum));
 
-        int updatedCounter[sampleCount];
-
+        int updatedCounter[clusterCount];
         printf("[%d] ar 3 start \n", processId);
-        MPI_Allreduce(counter, updatedCounter, sampleCount, MPI_INT, MPI_SUM, comm);
+        MPI_Allreduce(counter, updatedCounter, clusterCount, MPI_INT, MPI_SUM, comm);
         printf("[%d] ar 3 end \n", processId);
         memcpy(counter, updatedCounter, sizeof(counter));
 
