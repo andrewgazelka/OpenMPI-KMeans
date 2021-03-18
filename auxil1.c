@@ -158,7 +158,6 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     //-------------------- unpack params.
     int clusterCount = params[0];
     int sampleCount = params[1];
-    printf("sampleCount %d\n", sampleCount);
     int featureCount = params[2];
     int maxIterations = params[3];
 
@@ -168,17 +167,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
 
     // how much data each processor should process
-    printf("process count %d\n", processCount);
-    int chunkSize = (sampleCount / processCount);
+    int chunkSize = sampleCount;
+
     int sampleStart = chunkSize * processId;
-
     int sampleTo = sampleStart + chunkSize;
-    int samplesLeftOver = sampleCount - sampleTo;
-
-    if (samplesLeftOver < chunkSize) { // the last chunk is not large enough
-        sampleTo = sampleCount;
-    }
-
 
     int center_size = featureCount * clusterCount;
 
