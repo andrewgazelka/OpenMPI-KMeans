@@ -3,6 +3,7 @@
 #include <string.h>
 #include <mpi.h>
 #include "float.h"
+#include "assert.h"
 
 #define MAX_LINE 210
 #define bool char
@@ -155,14 +156,17 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
     // how much data each processor should process
     int chunkSize = (sampleNum / processCount);
-    int fromIdx = chunkSize * processId;
+    int sampleStart = chunkSize * processId;
 
-    int sampleTo = fromIdx + chunkSize;
+    int sampleTo = sampleStart + chunkSize;
     int samplesLeftOver = sampleNum - sampleTo;
 
     if (samplesLeftOver < chunkSize) { // the last chunk is not large enough
         sampleTo = sampleNum;
     }
+
+    assert(sampleStart >= 0);
+    assert(sampleTo <= featureNum * sampleNum);
 
     int center_size = featureNum * clusterNum;
 
@@ -199,7 +203,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
         for (int i = 0; i < featureNum * clusterNum; i++) sum[i] = 0;
 
 
-        for (int sampleIdx = fromIdx; sampleIdx < sampleTo; sampleIdx++) {
+        for (int sampleIdx = sampleStart; sampleIdx < sampleTo; sampleIdx++) {
             int dataStartIdx = sampleIdx * featureNum;
 
             int clusterMinIdx = -1;
