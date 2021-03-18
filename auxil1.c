@@ -270,13 +270,16 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
         sumGlobalFloat(sum, center_size, comm);
 
-        for (int i = 0; i < clusterCount; i++) {
-            printf("before... counter %d has %d items\n", i, counter[i]);
+        if (processId == 1) {
+            for (int i = 0; i < clusterCount; i++) {
+                printf("before... counter %d has %d items\n", i, counter[i]);
 //        float *start = &centers[i * featureCount];
 //        for (int j = 0; j < featureCount; ++j) {
 //            printf("%f ", (double) start[j]);
 //        }
-            printf("\n\n");
+                printf("\n\n");
+            }
+
         }
         sumGlobalInt(counter, clusterCount, comm);
 
@@ -343,13 +346,15 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 //        printf("\n\n");
 //    }
 
-    for (int i = 0; i < clusterCount; i++) {
-        printf("counter %d has %d items\n", i, counter[i]);
+    if (processId == 1) {
+        for (int i = 0; i < clusterCount; i++) {
+            printf("counter %d has %d items\n", i, counter[i]);
 //        float *start = &centers[i * featureCount];
 //        for (int j = 0; j < featureCount; ++j) {
 //            printf("%f ", (double) start[j]);
 //        }
-        printf("\n\n");
+            printf("\n\n");
+        }
     }
 
     return 0;
