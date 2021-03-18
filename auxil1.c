@@ -11,7 +11,7 @@
 #define false 0
 
 
-int MyKmeans_p(float *fdata, int *map2clust, int *counter, const int *params,
+int MyKmeans_p(const float *fdata, int *map2clust, int *counter, const int *params,
                float tolerance, MPI_Comm comm);
 
 
@@ -122,7 +122,7 @@ float dist2(float *x, float *y, int len) {
 
 /*=======================================================================*/
 
-int MyKmeans_p(float *inputDataIn, int *clustIdRet, int *counterRet, const int *params,
+int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const int *params,
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
