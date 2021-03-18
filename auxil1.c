@@ -306,7 +306,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
         // see if the data is within threshold and compute new centers
         for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
-            printf("cluster %d...\n", clusterOn);
+//            printf("cluster %d...\n", clusterOn);
 
             // difference between old center and new center
             float difference2 = 0;
@@ -328,9 +328,9 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
             // average
             for (int i = 0; i < clusterCount * featureCount; i++) {
-                float to = sumStart[i] / (float) processCount;
+                float to = sumStart[i] / ((float) processCount * (float) count);
 
-                printf("%f  ", to);
+//                printf("%f  ", to);
                 centerStart[i] = to;
 
                 float from = old_centers[i];
