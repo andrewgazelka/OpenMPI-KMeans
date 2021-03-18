@@ -250,7 +250,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                     float expect = centers[clusterIdx];
                     double difference = on - expect;
                     double d2 = difference * difference;
-                    printf("difference %f", difference);
+                    printf("difference %f\n", difference);
                     dist2 += d2;
                 }
 
