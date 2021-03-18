@@ -282,6 +282,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             }
 
             // change counters/clustIds accordingly
+            printf("minIdx %d\n", clusterMinIdx);
             counter[clusterMinIdx]++;
             clustId[sampleIdx] = clusterMinIdx;
         }
