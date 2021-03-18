@@ -280,23 +280,24 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             // difference between old center and new center
             float difference2 = 0;
 
-            int count = counter[clusterOn];
-            int dSum = clusterOn * featureCount;
-            assert(dSum < center_size);
-            float *sumStart = &sum[dSum];
+            int amountInCluster = counter[clusterOn];
+
+            float *sumStart = &sum[clusterOn * featureCount];
             float *centerStart = &centers[clusterOn * featureCount];
 
             // we need to sample
-            if (count == 0) {
+            if (amountInCluster == 0) {
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
 
                 // sum
                 sumGlobalFloat(sumStart, featureCount, comm);
             }
 
-            // average
-            for (int i = 0; i < clusterCount * featureCount; i++) {
-                float to = sumStart[i] / ((float) processCount * (float) count);
+            int divideBy = amountInCluster == 0 ? processCount : amountInCluster;
+
+            // average for cluster
+            for (int i = 0; i < featureCount; i++) {
+                float to = sumStart[i] / (float) divideBy;
 
                 centerStart[i] = to;
 
