@@ -348,7 +348,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
         }
 
         // set old centers to current centers
-        for (int i = 0; i < featureCount * sampleCount; i++) {
+        for (int i = 0; i < center_size; i++) {
             old_centers[i] = centers[i];
         }
 
