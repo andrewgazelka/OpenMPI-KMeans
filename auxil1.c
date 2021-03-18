@@ -161,7 +161,8 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
     for (int i = 0; i < data_size; ++i) {
         const float in = inputDataIn[i];
-        assert__(in < 1000 && in > -1000){
+        printf("in %d\n", in);
+        assert__(in < 1000 && in > -1000) {
             printf("in %f\n", in);
         }
         inputData[i] = in;
