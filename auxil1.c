@@ -303,7 +303,6 @@ int MyKmeans_p(const float *inputData, int *clustId, int *counter, const int *pa
                 float diff2 = diff * diff;
                 difference2 += diff2;
             }
-            printf("\n\n");
 
             if (difference2 > tolerance2) {
                 withinThreshold = false;
