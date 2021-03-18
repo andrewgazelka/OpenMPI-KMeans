@@ -285,7 +285,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             float difference2 = 0;
 
             int count = counter[clusterOn];
-            float *sumStart = &sum[clusterOn * featureCount];
+            int dSum = clusterOn * featureCount;
+            assert(dSum < center_size);
+            float *sumStart = &sum[dSum];
             float *centerStart = &centers[clusterOn * featureCount];
 
 
@@ -296,7 +298,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 printf("finished rand\n");
 
                 // sum
-                float sumStartUpdated[featureCount];
+                float sumStartUpdated[center_size];
 
                 printf("[%d] ar 4 start \n", processId);
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
