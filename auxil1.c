@@ -200,7 +200,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
 
 
         for (int sampleIdx = fromIdx; sampleIdx < sampleTo; sampleIdx++) {
-            int dataStartIdx = sampleIdx * sampleNum;
+            int dataStartIdx = sampleIdx * featureNum;
 
             int clusterMinIdx = -1;
             float dist2Min = FLT_MAX;
