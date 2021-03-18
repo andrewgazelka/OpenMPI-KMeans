@@ -122,7 +122,7 @@ float dist2(float *x, float *y, int len) {
 
 /*=======================================================================*/
 
-int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *params,
+int MyKmeans_p(float *inputDataIn, int *clustIdRet, int *counterRet, const int *params,
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
@@ -154,6 +154,14 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
     float tolerance2 = tolerance * tolerance;
     //int NcNf =clusterCount*featureCount;
     /*-------------------- replace these by your function*/
+
+    int data_size = featureCount * sampleCount;
+
+    float inputData[data_size];
+
+    for (int i = 0; i < data_size; ++i) {
+        inputData[i] = inputDataIn[i];
+    }
 
     // how much data each processor should process
     int chunkSize = (sampleCount / processCount);
