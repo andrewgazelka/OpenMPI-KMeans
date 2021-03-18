@@ -2,7 +2,7 @@
 
 ##CC			=  gcc
 CC			=  mpicc
-CFLAGS			= -g -Wall
+CFLAGS			= -g -Wall -fno-omit-frame-pointer -fsanitize=bounds
 ##LIBS			=  -L/project/scicom/scicom00/SOFT/lib/linux/ -lblas
 LIBS			=  -lblas 
 
