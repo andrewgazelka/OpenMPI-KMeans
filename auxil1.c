@@ -165,6 +165,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         sampleTo = sampleCount;
     }
 
+    printf("start\n");
+
     int center_size = featureCount * clusterCount;
 
 
@@ -185,7 +187,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     // sum all of the centers cross-process
 
     float updatedCenters[center_size];
+
+    printf("[%d] ar 1 start \n", processId);
     MPI_Allreduce(centers, updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
+    printf("[%d] ar 1 end \n", processId);
     memcpy(centers, updatedCenters, sizeof(centers));
 
     // average
