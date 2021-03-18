@@ -122,7 +122,7 @@ float dist2(float *x, float *y, int len) {
 
 /*=======================================================================*/
 
-int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
+int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *params,
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
@@ -200,6 +200,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, const int *params,
     float sum[center_size];
 
     int iterOn = 0;
+
+    float* clustId[sampleNum];
+    int* counter[clusterNum];
 
     while (iterOn < maxIterations) {
 
