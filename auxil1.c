@@ -288,6 +288,9 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             float *sumStart = sum + (clusterOn * featureCount);
             float *centerStart = &centers[clusterOn * featureCount];
 
+            if(count == 0){
+                count = 1;
+            }
 
             // we need to sample
             if (count == 0) {
