@@ -253,10 +253,11 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                     dist2 += d2;
                 }
 
-                printf("dist2 %f\n", dist2);
                 if (dist2 <= dist2Min) {
                     dist2Min = dist2;
                     clusterMinIdx = clusterOn;
+                } else if (clusterOn == 0) {
+                    printf("dist2 %f\n", dist2);
                 }
             }
 
