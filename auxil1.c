@@ -273,7 +273,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         printf("[%d] ar 3 start \n", processId);
         MPI_Allreduce(counter, updatedCounter, clusterCount, MPI_INT, MPI_SUM, comm);
         printf("[%d] ar 3 end \n", processId);
-        memcpy(counter, updatedCounter, sizeof(counter));
+        memcpy(counter, updatedCounter, sizeof(int) * (unsigned long) clusterCount);
 
         // if the new data is within the threshold
         bool withinThreshold = true;
