@@ -147,7 +147,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     //-------------------- unpack params.
     int clusterCount = params[0];
     int sampleCount = params[1];
-    printf("sampleCount %d\n", sampleCount);
     int featureCount = params[2];
     int maxIterations = params[3];
 
@@ -161,7 +160,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
     for (int i = 0; i < data_size; ++i) {
         const float in = inputDataIn[i];
-        printf("in %f\n", in);
         assert__(in < 1000 && in > -1000) {
             printf("in %f\n", in);
         }
@@ -316,7 +314,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
             // we need to sample
             if (count == 0) {
-                printf("sum start\n");
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
 
                 // sum
@@ -360,11 +357,9 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     }
     for (int j = 0; j < clusterCount; j++) {
         int size = counter[j];
-        printf("size %d\n", size);
         counterRet[j] = size;
     }
 
-    printf("done!\n");
 
 
     return 0;
