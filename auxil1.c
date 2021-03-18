@@ -9,9 +9,8 @@
 #define bool char
 #define true 1
 #define false 0
-#define assert__(x) for ( ; !(x) ; assert(x) )
 
-int MyKmeans_p(const float *fdata, int *map2clust, int *counter, const int *params,
+int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
                float tolerance, MPI_Comm comm);
 
 
@@ -122,7 +121,7 @@ float dist2(float *x, float *y, int len) {
 
 /*=======================================================================*/
 
-int MyKmeans_p(const float *inputData, int *clustId, int *counter, const int *params,
+int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
