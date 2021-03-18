@@ -251,10 +251,9 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                     float expect = centers[clusterIdx];
                     double difference = on - expect;
                     double d2 = difference * difference;
-                    assert__(d2 < 10000.0 * 10000.0){
+                    assert__(d2 < 100000.0 * 100000.0){
                         printf("assert failed... on [%f], expeect[%f]\n", on, expect);
                     }
-                    printf("difference %f\n", difference);
                     dist2 += d2;
                 }
 
