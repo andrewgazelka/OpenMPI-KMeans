@@ -324,5 +324,14 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         iterOn++;
     }
 
+    for (int i = 0; i < clusterCount; i++) {
+        printf("cluster %d\n", i);
+        float *start = &centers[i * featureCount];
+        for (int j = 0; j < featureCount; ++j) {
+            printf("%d", (double) start[j]);
+        }
+        printf("\n");
+    }
+
     return 0;
 }
