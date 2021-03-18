@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
             fprintf(fout, "Cluster %3d  size: %4d \n", i, counter[i]);
     }
     for (i = 0; i < nloc; i++) {
-        printf("i %d\n", i);
         fprintf(fout, " %d \n", map2clust[i]);
     }
     fprintf(fout, " ---- \n");
