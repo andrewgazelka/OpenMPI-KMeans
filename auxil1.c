@@ -122,7 +122,7 @@ float dist2(float *x, float *y, int len) {
 
 /*=======================================================================*/
 
-int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const int *params,
+int MyKmeans_p(const float *inputData, int *clustId, int *counter, const int *params,
                float tolerance, MPI_Comm comm) {
 /*==================================================
   IN: 
@@ -155,13 +155,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     /*-------------------- replace these by your function*/
 
     int data_size = featureCount * sampleCount;
-
-    float inputData[data_size];
-
-    for (int i = 0; i < data_size; ++i) {
-        const float in = inputDataIn[i];
-        inputData[i] = in;
-    }
 
     // how much data each processor should process
     int chunkSize = (sampleCount / processCount);
@@ -207,13 +200,11 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
     int iterOn = 0;
 
-    int clustId[sampleCount];
-    int counter[clusterCount];
+    for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
+    for (int j = 0; j < clusterCount; j++) counter[j] = 0;
 
     while (iterOn < maxIterations) {
 
-        for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
-        for (int j = 0; j < clusterCount; j++) counter[j] = 0;
 
         // reset sum
         for (int i = 0; i < featureCount * clusterCount; i++) sum[i] = 0;
@@ -332,16 +323,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
         iterOn++;
     }
-
-    for (int j = 0; j < sampleCount; j++) {
-        clustIdRet[j] = clustId[j];
-    }
-
-    for (int j = 0; j < clusterCount; j++) {
-        int size = counter[j];
-        counterRet[j] = size;
-    }
-
 
     return 0;
 }
