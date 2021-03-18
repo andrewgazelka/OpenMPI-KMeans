@@ -285,17 +285,15 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             float difference2 = 0;
 
             int count = counter[clusterOn];
-            float *sumStart = sum + (clusterOn * featureCount);
+            float *sumStart = &sum[clusterOn * featureCount];
             float *centerStart = &centers[clusterOn * featureCount];
 
-            if(count == 0){
-                count = 1;
-            }
 
             // we need to sample
             if (count == 0) {
                 printf("count is 0\n");
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
+                printf("finished rand\n");
 
                 // sum
                 float sumStartUpdated[featureCount];
