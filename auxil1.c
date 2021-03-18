@@ -286,26 +286,29 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
             float difference2 = 0;
 
             int count = counter[clusterOn];
+            if(count == 0){
+                count = 1;
+            }
             float *sumStart = sum + (clusterOn * featureCount);
             float *centerStart = &centers[clusterOn * featureCount];
 
 
             // we need to sample
-            if (count == 0) {
-                printf("count is 0\n");
-                get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
-
-                // sum
-                float sumStartUpdated[featureCount];
-
-                printf("[%d] ar 4 start \n", processId);
-                printf("barrier init\n");
-                MPI_Barrier(comm); // barrier
-                printf("barrier\n");
-                MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
-                printf("[%d] ar 4 end \n", processId);
-                memcpy(sumStart, sumStartUpdated, sizeof(sumStart));
-            }
+//            if (count == 0) {
+//                printf("count is 0\n");
+//                get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
+//
+//                // sum
+//                float sumStartUpdated[featureCount];
+//
+//                printf("[%d] ar 4 start \n", processId);
+//                printf("barrier init\n");
+//                MPI_Barrier(comm); // barrier
+//                printf("barrier\n");
+//                MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
+//                printf("[%d] ar 4 end \n", processId);
+//                memcpy(sumStart, sumStartUpdated, sizeof(sumStart));
+//            }
 
             // average
             for (int i = 0; i < clusterCount * featureCount; i++) {
