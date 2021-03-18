@@ -186,7 +186,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
     float updatedCenters[center_size];
     MPI_Allreduce(centers, updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
-    memcpy(&centers, &updatedCenters, sizeof(centers));
+    memcpy(centers, updatedCenters, sizeof(centers));
 
     // average
     for (int i = 0; i < clusterCount * featureCount; i++) {
@@ -264,7 +264,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
         float updatedCounter[sampleCount];
         MPI_Allreduce(counter, updatedCounter, sampleCount, MPI_FLOAT, MPI_SUM, comm);
-        memcpy(&counter, &updatedCounter, sizeof(counter));
+        memcpy(counter, updatedCounter, sizeof(counter));
 
         // if the new data is within the threshold
         bool withinThreshold = true;
@@ -287,7 +287,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 // sum
                 float sumStartUpdated[featureCount];
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
-                memcpy(&sumStart, &sumStartUpdated, sizeof(sumStart));
+                memcpy(sumStart, sumStartUpdated, sizeof(sumStart));
             }
 
             // average
