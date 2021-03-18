@@ -203,10 +203,11 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
     int iterOn = 0;
 
-    for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
-    for (int j = 0; j < clusterCount; j++) counter[j] = 0;
 
     while (iterOn < maxIterations) {
+
+        for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
+        for (int j = 0; j < clusterCount; j++) counter[j] = 0;
 
 
         // reset sum
