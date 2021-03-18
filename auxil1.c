@@ -248,7 +248,7 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
             for (int i = 0; i < featureCount; i++) {
                 int dataIdx = dataStartIdx + i;
 
-                assert(dataIdx > 0);
+                assert(dataIdx >= 0);
                 assert(dataIdx < featureCount * sampleCount);
 
                 float datum = inputData[dataIdx];
