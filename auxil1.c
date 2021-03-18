@@ -201,8 +201,8 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
 
     int iterOn = 0;
 
-    int* clustId[sampleNum];
-    int* counter[clusterNum];
+    int clustId[sampleNum];
+    int counter[clusterNum];
 
     while (iterOn < maxIterations) {
 
