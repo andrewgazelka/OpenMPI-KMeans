@@ -185,7 +185,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     // sum all of the centers cross-process
 
     float updatedCenters[center_size];
-    MPI_Allreduce(&centers, &updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
+    MPI_Allreduce(centers, updatedCenters, center_size, MPI_FLOAT, MPI_SUM, comm);
     memcpy(&centers, &updatedCenters, sizeof(centers));
 
     // average
@@ -259,11 +259,11 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         // add sums and counters globally
 
         float updatedSum[center_size];
-        MPI_Allreduce(&sum, &updatedSum, center_size, MPI_FLOAT, MPI_SUM, comm);
-        memcpy(&sum, &updatedSum, sizeof(sum));
+        MPI_Allreduce(sum, updatedSum, center_size, MPI_FLOAT, MPI_SUM, comm);
+        memcpy(sum, updatedSum, sizeof(sum));
 
         float updatedCounter[sampleCount];
-        MPI_Allreduce(&counter, &updatedCounter, sampleCount, MPI_FLOAT, MPI_SUM, comm);
+        MPI_Allreduce(counter, updatedCounter, sampleCount, MPI_FLOAT, MPI_SUM, comm);
         memcpy(&counter, &updatedCounter, sizeof(counter));
 
         // if the new data is within the threshold
@@ -286,7 +286,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
                 // sum
                 float sumStartUpdated[featureCount];
-                MPI_Allreduce(&sumStart, &sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
+                MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
                 memcpy(&sumStart, &sumStartUpdated, sizeof(sumStart));
             }
 
