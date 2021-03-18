@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD,&myid);
     /*-------------------- file for reading data */
     //char file_name[] = "smaller.csv";
-    char file_name[] = "/export/scratch/users/csci5451/pollution_Vsmall.csv";
+    char file_name[] = "/export/scratch/users/csci5451/pollution_small.csv";
     int params[4];              // for passing a few parameters
     float tol = 1.e-10;         // stopping criterion
     int nmax = NSAMPLES;        // max number of samples to read
