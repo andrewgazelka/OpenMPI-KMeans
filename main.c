@@ -109,6 +109,8 @@ int main(int argc, char *argv[]) {
     }
     fclose(fout);
     MPI_Finalize();
+
+    printf("done!\n");
     return (0);
 }
 
