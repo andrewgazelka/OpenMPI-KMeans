@@ -236,6 +236,7 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             assert(dist2Min > 90000.0F);
             assert(clusterCount > 0);
             for (int clusterOn = 0; clusterOn < clusterCount; ++clusterOn) {
+                printf("cluster %d", clusterOn);
 
                 int clusterStartIdx = featureCount * clusterOn;
                 double dist2 = 0;
@@ -249,9 +250,12 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                     assert(dataIdx < data_size);
 
                     int clusterIdx = clusterStartIdx + i;
+
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
                     double difference = on - expect;
+
+                    printf("difference %f\n", difference);
                     double d2 = difference * difference;
                     assert__(d2 < 100000.0 * 100000.0) {
                         printf("assert failed... on [%f], expeect[%f]\n", on, expect);
