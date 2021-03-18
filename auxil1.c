@@ -167,6 +167,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
 
     // how much data each processor should process
+    printf("process count %d\n", processCount);
     int chunkSize = (sampleCount / processCount);
     int sampleStart = chunkSize * processId;
 
