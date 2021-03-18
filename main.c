@@ -73,7 +73,11 @@ int main(int argc, char *argv[]) {
 
     MPI_Barrier(MPI_COMM_WORLD);
 
+    double start = MPI_Wtime();
     MyKmeans_p(fdata, map2clust, counter, params, tol, MPI_COMM_WORLD);
+    double end = MPI_Wtime();
+    double elapsed = end - start;
+    printf("time elapsed %f\n", elapsed);
 
     sprintf(outfile, "OUT/FinalOutId%d", myid);
     printf(" myid %d my filename %s\n", myid, outfile);
