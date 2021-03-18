@@ -363,8 +363,8 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
         printf("cluster %d\n", i);
         for (int j = 0; j < featureCount; ++j) {
             printf("%f", (double) centers[i * featureCount + j]);
-            printf("\n");
         }
+        printf("\n\n");
     }
 
 
