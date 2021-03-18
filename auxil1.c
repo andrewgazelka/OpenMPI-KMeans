@@ -264,11 +264,16 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         // add sums and counters globally
 
         float updatedSum[center_size];
+        printf("[%d] ar 2 start \n", processId);
         MPI_Allreduce(sum, updatedSum, center_size, MPI_FLOAT, MPI_SUM, comm);
+        printf("[%d] ar 2 end \n", processId);
         memcpy(sum, updatedSum, sizeof(sum));
 
         float updatedCounter[sampleCount];
+
+        printf("[%d] ar 3 start \n", processId);
         MPI_Allreduce(counter, updatedCounter, sampleCount, MPI_FLOAT, MPI_SUM, comm);
+        printf("[%d] ar 3 end \n", processId);
         memcpy(counter, updatedCounter, sizeof(counter));
 
         // if the new data is within the threshold
@@ -291,7 +296,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
                 // sum
                 float sumStartUpdated[featureCount];
+
+                printf("[%d] ar 4 start \n", processId);
                 MPI_Allreduce(sumStart, sumStartUpdated, featureCount, MPI_FLOAT, MPI_SUM, comm);
+                printf("[%d] ar 4 end \n", processId);
                 memcpy(sumStart, sumStartUpdated, sizeof(sumStart));
             }
 
