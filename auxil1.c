@@ -160,7 +160,11 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     float inputData[data_size];
 
     for (int i = 0; i < data_size; ++i) {
-        inputData[i] = inputDataIn[i];
+        const float in = inputDataIn[i];
+        assert__(in < 1000 && in > -1000){
+            printf("in %f\n", in);
+        }
+        inputData[i] = in;
     }
 
     // how much data each processor should process
@@ -245,13 +249,14 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
                     assert(dataIdx >= 0);
                     assert(dataIdx < featureCount * sampleCount);
+                    assert(dataIdx < data_size);
 
                     int clusterIdx = clusterStartIdx + i;
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
                     double difference = on - expect;
                     double d2 = difference * difference;
-                    assert__(d2 < 100000.0 * 100000.0){
+                    assert__(d2 < 100000.0 * 100000.0) {
                         printf("assert failed... on [%f], expeect[%f]\n", on, expect);
                     }
                     dist2 += d2;
