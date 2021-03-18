@@ -255,6 +255,7 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
                 assert(dataIdx >= 0);
                 assert(dataIdx < featureCount * sampleCount);
 
+                printf("reading %d\n", dataIdx);
                 float datum = inputData[dataIdx];
                 sum[clusterMinIdx * featureCount + i] += datum;
             }
