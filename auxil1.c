@@ -293,7 +293,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
 
             // we need to sample
             if (count == 0) {
-                printf("count is 0\n");
+                printf("[%d] count is 0\n", processId);
                 get_rand_ftr(sumStart, inputData, sampleCount, featureCount);
                 printf("finished rand\n");
 
