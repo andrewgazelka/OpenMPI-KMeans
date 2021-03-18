@@ -247,6 +247,10 @@ int MyKmeans_p(float *inputData, int *clustIdRet, int *counterRet, const int *pa
             // add the sample to the sum for the cluster
             for (int i = 0; i < featureNum; i++) {
                 int dataIdx = dataStartIdx + i;
+
+                assert(dataIdx > 0);
+                assert(dataIdx < featureNum * sampleNum);
+
                 float datum = inputData[dataIdx];
                 sum[clusterMinIdx * featureNum + i] += datum;
             }
