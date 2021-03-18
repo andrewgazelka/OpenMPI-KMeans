@@ -160,9 +160,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
     for (int i = 0; i < data_size; ++i) {
         const float in = inputDataIn[i];
-        assert__(in < 1000 && in > -1000) {
-            printf("in %f\n", in);
-        }
         inputData[i] = in;
     }
 
@@ -176,9 +173,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     if (samplesLeftOver < chunkSize) { // the last chunk is not large enough
         sampleTo = sampleCount;
     }
-
-    assert(sampleStart >= 0);
-    assert(sampleTo <= sampleCount);
 
     int center_size = featureCount * clusterCount;
 
@@ -233,8 +227,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             double dist2Min = DBL_MAX;
 
             // compute the closest cluster to the data point
-            assert(dist2Min > 90000.0F);
-            assert(clusterCount > 0);
             for (int clusterOn = 0; clusterOn < clusterCount; ++clusterOn) {
 
                 int clusterStartIdx = featureCount * clusterOn;
@@ -244,26 +236,15 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                 for (int i = 0; i < featureCount; i++) {
                     int dataIdx = dataStartIdx + i;
 
-                    assert(dataIdx >= 0);
-                    assert(dataIdx < featureCount * sampleCount);
-                    assert(dataIdx < data_size);
-
                     int clusterIdx = clusterStartIdx + i;
 
                     float on = inputData[dataIdx];
                     float expect = centers[clusterIdx];
                     double difference = on - expect;
 
-//                    printf("cluster %d, difference %f, on %f, expect %f\n", clusterOn, difference, (double) on,
-//                           (double) expect);
                     double d2 = difference * difference;
-                    assert__(d2 < 100000.0 * 100000.0) {
-                        printf("assert failed... on [%f], expeect[%f]\n", on, expect);
-                    }
                     dist2 += d2;
                 }
-
-                assert(dist2 < DBL_MAX);
 
                 if (dist2 <= dist2Min) {
                     dist2Min = dist2;
@@ -271,15 +252,11 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
                 }
             }
 
-            assert(clusterMinIdx >= 0);
 
 
             // add the sample to the sum for the cluster
             for (int i = 0; i < featureCount; i++) {
                 int dataIdx = dataStartIdx + i;
-
-                assert(dataIdx >= 0);
-                assert(dataIdx < featureCount * sampleCount);
 
                 float datum = inputData[dataIdx];
                 sum[clusterMinIdx * featureCount + i] += datum;
@@ -306,7 +283,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
 
         // see if the data is within threshold and compute new centers
         for (int clusterOn = 0; clusterOn < clusterCount; clusterOn++) {
-//            printf("cluster %d...\n", clusterOn);
 
             // difference between old center and new center
             float difference2 = 0;
@@ -330,7 +306,6 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
             for (int i = 0; i < clusterCount * featureCount; i++) {
                 float to = sumStart[i] / ((float) processCount * (float) count);
 
-//                printf("%f  ", to);
                 centerStart[i] = to;
 
                 float from = old_centers[i];
@@ -361,17 +336,10 @@ int MyKmeans_p(const float *inputDataIn, int *clustIdRet, int *counterRet, const
     for (int j = 0; j < sampleCount; j++) {
         clustIdRet[j] = clustId[j];
     }
+
     for (int j = 0; j < clusterCount; j++) {
         int size = counter[j];
         counterRet[j] = size;
-    }
-
-    for (int i = 0; i < clusterCount; i++) {
-        printf("cluster %d\n", i);
-        for (int j = 0; j < featureCount; ++j) {
-            printf("%f  ", (double) centers[i * featureCount + j]);
-        }
-        printf("\n\n");
     }
 
 
