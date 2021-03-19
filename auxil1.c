@@ -264,6 +264,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         // add sums and counters globally
 
         sumGlobalFloat(sum, center_size, comm);
+        sumGlobalInt(clustId, sampleCount, comm);
         sumGlobalInt(counter, clusterCount, comm);
 
         // if the new data is within the threshold
