@@ -12,7 +12,9 @@ int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
 #define NSAMPLES 10000
 #define NFEAT 17
 #define NCLUST 10
-#define ITERATIONS 1000
+#define ITERATIONS 30
+#define TOL 0
+// 1.e-10
 
 int main(int argc, char *argv[]){
     int myid, nprocs;
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]){
     //char file_name[] = "smaller.csv";
     char file_name[] = "/export/scratch/users/csci5451/pollution_small.csv";
     int params[4];              // for passing a few parameters
-    float tol = 1.e-10;         // stopping criterion
+    float tol = TOL;         // stopping criterion
     int nmax = NSAMPLES;        // max number of samples to read
     int counter[NCLUST];        // counter for size of each cluster
     /*-------------------- START --------------------*/
