@@ -14,6 +14,11 @@
 int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
                float tolerance, MPI_Comm comm);
 
+void addOnto(float *from, float *toAdd, int length) {
+    for (int i = 0; i < length; ++i) {
+        from[i] += toAdd[i];
+    }
+}
 
 void sumGlobalFloat(float *array, int size, MPI_Comm comm) {
     float temp[size];
@@ -198,6 +203,7 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
     }
 
 
+    // the sum of all features at a certain center
     float sum[center_size];
 
     int iterOn = 0;
@@ -216,6 +222,8 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         for (int sampleIdx = 0; sampleIdx < sampleCount; sampleIdx++) {
 
             int dataStartIdx = sampleIdx * featureCount;
+
+            float *data = &inputData[dataStartIdx];
 
             int clusterMinIdx = -1;
             float dist2Min = FLT_MAX;
@@ -246,15 +254,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 }
             }
 
-
+            float* sumForCluster = &sum[clusterMinIdx];
 
             // add the sample to the sum for the cluster
-            for (int i = 0; i < featureCount; i++) {
-                int dataIdx = dataStartIdx + i;
-
-                float datum = inputData[dataIdx];
-                sum[clusterMinIdx * featureCount + i] += datum;
-            }
+            addOnto(sumForCluster, data, featureCount);
 
             // change counters/clustIds accordingly
             counter[clusterMinIdx]++;
@@ -264,7 +267,6 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         // add sums and counters globally
 
         sumGlobalFloat(sum, center_size, comm);
-        sumGlobalInt(clustId, sampleCount, comm);
         sumGlobalInt(counter, clusterCount, comm);
 
         // if the new data is within the threshold
@@ -321,23 +323,27 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         iterOn++;
     }
 
+
+    // clean up loop to make sure everything assigned properly
+
+    for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
+    for (int j = 0; j < clusterCount; j++) counter[j] = 0;
+
     for (int sampleIdx = 0; sampleIdx < sampleCount; ++sampleIdx) {
         const float *sample = inputData + (featureCount) * sampleIdx;
 
         float closestDist = FLT_MAX;
-        int closestIdx = -1;
+        int closestClusterIdx = -1;
         for (int clusterIdx = 0; clusterIdx < clusterCount; clusterIdx++) {
             const float *cluster = &centers[clusterIdx * featureCount];
             float d2 = dist2(sample, cluster, featureCount);
             if (d2 < closestDist) {
                 closestDist = d2;
-                closestIdx = clusterIdx;
+                closestClusterIdx = clusterIdx;
             }
         }
-        int clustIdVal = clustId[sampleIdx];
-        assert__(closestIdx == clustIdVal) {
-            printf("closestIdx was %d and clustId was %d for sampleIdx %d\n", closestIdx, clustIdVal, sampleIdx);
-        }
+        counter[closestClusterIdx]++;
+        clustId[sampleIdx] = closestClusterIdx;
     }
 
     return 0;
