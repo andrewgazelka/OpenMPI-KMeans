@@ -323,28 +323,5 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         iterOn++;
     }
 
-
-    // clean up loop to make sure everything assigned properly
-
-    for (int j = 0; j < sampleCount; j++) clustId[j] = 0;
-    for (int j = 0; j < clusterCount; j++) counter[j] = 0;
-
-    for (int sampleIdx = 0; sampleIdx < sampleCount; ++sampleIdx) {
-        const float *sample = inputData + (featureCount) * sampleIdx;
-
-        float closestDist = FLT_MAX;
-        int closestClusterIdx = -1;
-        for (int clusterIdx = 0; clusterIdx < clusterCount; clusterIdx++) {
-            const float *cluster = &centers[clusterIdx * featureCount];
-            float d2 = dist2(sample, cluster, featureCount);
-            if (d2 < closestDist) {
-                closestDist = d2;
-                closestClusterIdx = clusterIdx;
-            }
-        }
-        counter[closestClusterIdx]++;
-        clustId[sampleIdx] = closestClusterIdx;
-    }
-
     return 0;
 }
