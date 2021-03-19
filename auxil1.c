@@ -122,7 +122,7 @@ int read_csv_matrix(float *mtrx, char file_name[], int *nrow, int *nfeat) {
 
 /*-------------------- assign a center to an item */
 
-float dist2(float *x, float *y, int len) {
+float dist2(const float *x, const float *y, int len) {
     int i;
     float dist = 0;
     for (i = 0; i < len; i++) {
@@ -317,6 +317,22 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
         }
 
         iterOn++;
+    }
+
+    for (int sampleIdx = 0; sampleIdx < sampleCount; ++sampleIdx) {
+        const float *sample = inputData + (featureCount) * sampleIdx;
+
+        float closestDist = FLT_MAX;
+        int closestIdx = -1;
+        for (int clusterIdx = 0; clusterIdx < clusterCount; clusterIdx++) {
+            const float *cluster = &centers[clusterIdx * featureCount];
+            float d2 = dist2(sample, cluster, featureCount);
+            if (d2 < closestDist) {
+                closestDist = d2;
+                closestIdx = clusterIdx;
+            }
+        }
+        assert(closestIdx == clustId[sampleIdx]);
     }
 
     return 0;
