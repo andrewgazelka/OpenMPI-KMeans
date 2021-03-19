@@ -12,12 +12,13 @@ int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
 #define NSAMPLES 10000
 #define NFEAT 17
 #define NCLUST 10
+#define ITERATIONS 1000
 
 int main(int argc, char *argv[]){
     int myid, nprocs;
     int Nc = 5;
     float *fdata;
-    int nloc, len, itmax=20;
+    int nloc, len, itmax=ITERATIONS;
     int i, j, ierr, nfeat = 0, nitems=0;
     char outfile[24], proc_name[40];
     FILE *fout;
