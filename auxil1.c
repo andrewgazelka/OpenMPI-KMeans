@@ -9,6 +9,7 @@
 #define bool char
 #define true 1
 #define false 0
+#define assert__(x) for ( ; !(x) ; assert(x) )
 
 int MyKmeans_p(float *fdata, int *map2clust, int *counter, int *params,
                float tolerance, MPI_Comm comm);
@@ -332,7 +333,10 @@ int MyKmeans_p(float *inputData, int *clustId, int *counter, int *params,
                 closestIdx = clusterIdx;
             }
         }
-        assert(closestIdx == clustId[sampleIdx]);
+        int clustIdVal = clustId[sampleIdx];
+        assert__(closestIdx == clustIdVal) {
+            printf("closestIdx was %d and clustId was %d for sampleIdx %d\n", closestIdx, clustIdVal, sampleIdx);
+        }
     }
 
     return 0;
